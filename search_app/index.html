@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <title>Поиск по статьям</title>
+	<link href={{ url_for('static', filename='style6.css') }} rel='stylesheet'>
+</head>
+<body>
+	<div class='header'>
+		<div class='content'>
+			<h2>Поиск по статьям с сайта "Ясный Ключ"</h2>
+		</div>
+	</div>
+	<div class='main'>
+		<div class='content'>
+			<form>
+				<input type="text" name="query"></input>
+				<input class="button" type="submit" value="Найти">
+			</form>
+			{% for href,title in links %}
+			<hr>
+			<a href="{{ href }}" target="_blank">{{ title }}<a><br>
+			{% endfor %}
+		</div>
+	</div>
+</body>
+</html>
