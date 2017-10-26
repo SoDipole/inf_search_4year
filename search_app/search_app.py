@@ -8,7 +8,8 @@ from nltk.tokenize import word_tokenize
 from flask import Flask
 from flask import url_for, render_template, request
 from math import log
-
+from pyaspeller import Word
+    
 app = Flask(__name__)
 
 morph = pymorphy2.MorphAnalyzer()
@@ -34,6 +35,19 @@ def get_data():
         avg_len = float(f.read())
     return index, articles_info, avg_len
 
+def correctSpelling(words):
+    checked_words = []
+    for word in words:
+        try:
+            check = Word(word)
+            if not check.correct and check.spellsafe:
+                checked_words.append(check.spellsafe)
+            else:
+                checked_words.append(word)
+        except:
+            return words
+    return checked_words
+
 def search(query):
     articles_relevance = defaultdict(float)
     result = []
@@ -45,6 +59,7 @@ def search(query):
             lemma = morph.parse(word)[0].normal_form
             if lemma not in stopwords.words('russian'):
                 lemmas.append(lemma)
+    lemmas = correctSpelling(lemmas)
     if len(lemmas) > 0:
         index, articles_info, avg_len = get_data()
         N = len(articles_info)
@@ -57,6 +72,8 @@ def search(query):
                     title = articles_info[document[0]]["title"]
                     url = articles_info[document[0]]["url"]
                     articles_relevance[(url, title)] += score_BM25(n, qf, N, dl, avg_len)
+                    if lemma in [morph.parse(word)[0].normal_form for word in word_tokenize(title)]:
+                        articles_relevance[(url, title)] += 0.5
         result = [item[0] for item in sorted(articles_relevance.items(), key=lambda x: x[1], reverse=True)]
         if len(result) > 10:
             result = result[:10]
@@ -71,4 +88,4 @@ def index():
     return render_template('index.html',links=[])
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
