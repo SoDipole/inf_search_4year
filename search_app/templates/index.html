@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang='en'>
+<html lang='ru'>
 <head>
     <meta charset='UTF-8'>
     <title>Поиск по статьям</title>
-	<link href={{ url_for('static', filename='style6.css') }} rel='stylesheet'>
+	<link href={{ url_for('static', filename='style8.css') }} rel='stylesheet'>
 </head>
 <body>
 	<div class='header'>
 		<div class='content'>
-			<h2>Поиск по статьям с сайта "Ясный Ключ"</h2>
+			<a href={{ url_for('index') }}>Поиск по статьям с сайта "Ясный Ключ"</a>
 		</div>
 	</div>
 	<div class='main'>
@@ -17,9 +17,9 @@
 				<input type="text" name="query"></input>
 				<input class="button" type="submit" value="Найти">
 			</form>
-			{% for href,title in links %}
+			{% for url, title in links %}
 			<hr>
-			<a href="{{ href }}" target="_blank">{{ title }}<a><br>
+			<a href="{{ url }}" target="_blank">{{ title }}<a><br>
 			{% endfor %}
 		</div>
 	</div>
