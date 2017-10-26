@@ -3,7 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 
 def get_links(main_url, page_url):
-    links_list = []
+    links_list = set()
     r = requests.get(main_url + page_url)
     if r:
         html = r.text
@@ -11,7 +11,7 @@ def get_links(main_url, page_url):
         links = soup.find_all("a")
         
         while links:
-            links2 = []
+            links2 = set()
             for link in links: 
                 page_url = link.get("href")
                 
@@ -19,14 +19,14 @@ def get_links(main_url, page_url):
                     and page_url.startswith("/wiki/") 
                     and page_url not in links_list
                     and not re.search("\..{2,3}$", page_url)):
-                    links_list.append(page_url)
+                    links_list.add(page_url)
                     print(page_url)
                     
                     r = requests.get(main_url + page_url)
                     if r:
                         html = r.text
                         soup = BeautifulSoup(html, "html.parser")
-                        links2 += soup.find_all("a")
+                        links2.update(soup.find_all("a"))
             links = links2
     return links_list
                 
